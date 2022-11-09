@@ -20,6 +20,26 @@ mvn clean package
 }
 ```
 
+Attention, [Feel](https://docs.camunda.io/docs/components/modeler/feel/what-is-feel/) is not able to add different type of variable.
+
+
+
+For example, an expression 
+
+```
+= "requestId="+requestId
+```
+
+return null if requestId is not a String (but a long).
+
+The connector accept the notation ${variableName} to calculate the list of variable.
+In this example, use
+```
+= "requestId=${requestId}
+```
+Doing this way, if requestId is a long, it will send in the message as a Long.
+
+
 ### Output
 
 ```json
@@ -27,8 +47,18 @@ mvn clean package
 
 }
 ```
+No output
+
+### BPMN Error
+
+These errors can be thrown by the connector:
+
+| Code | Explanation |
+|---|---|
+| TOO_MANY_CORRELATION_VARIABLE_ERROR|Correlation error|
+| INCORRECT_VARIABLE| A variable must `name=value`|
 
 
 ## Element Template
 
-The element template can be found in the [element-templates/template-connector.json](element-templates/template-connector.json) file.
+The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/template-connector.json) file.
