@@ -49,7 +49,7 @@ Doing this way, if requestId is a long, it will send in the message as a Long.
 ```
 No output
 
-### BPMN Error
+### BPMN Errors
 
 These errors can be thrown by the connector:
 
@@ -62,3 +62,50 @@ These errors can be thrown by the connector:
 ## Element Template
 
 The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/template-connector.json) file.
+
+
+# Start the connector
+The connector runs under the Cherry framework. It is possible to start it.
+
+## Specify the connection to Zeebe
+
+The connection to the Zeebe engine is piloted via the application.properties located on src/main/java/resources/application.properties
+
+### Use a Camunda Saas Cloud:
+
+1. Follow the [Getting Started Guid](https://docs.camunda.io/docs/guides/getting-started/) to create an account, a
+   cluster and client credentials
+
+2. Use the client credentials to fill the following environment variables:
+    * `ZEEBE_ADDRESS`: Address where your cluster can be reached.
+    * `ZEEBE_CLIENT_ID` and `ZEEBE_CLIENT_SECRET`: Credentials to request a new access token.
+    * `ZEEBE_AUTHORIZATION_SERVER_URL`: A new token can be requested at this address, using the credentials.
+
+3. fulfill the information in the application.properties
+````
+# use a cloud Zeebe engine
+zeebe.client.cloud.region=
+zeebe.client.cloud.clusterId=
+zeebe.client.cloud.clientId=
+zeebe.client.cloud.clientSecret=
+````
+
+### Use a onPremise Zeebe
+
+Use this information in the application.properties, and provide the IP address to the Zeebe engine
+
+````
+# use a onPremise Zeebe engine
+zeebe.client.broker.gateway-address=127.0.0.1:26500
+````
+
+## Start the application
+Attention: this connector works with the JDK 17.
+
+Start the connector with
+````
+mvn spring-boot:run
+````
+
+Access then localhost:9081 to access the dashboard
+
