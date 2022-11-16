@@ -17,27 +17,62 @@ mvn clean package
 
 ```json
 {
+   "messageName" : "v-message-transferdone",
+   "correlationVariables": "requestId=${requestId}",
+   "messageId" :  "This-is-an-id",
+   "messageDuration": "duration(\"PT1H\")",
+   "MessageVariables":  "statusTransferExpense=${status}, dateTransferExpense=${dateTransfer}, amountTransfer=${amount}"
+
 }
 ```
+*MessageName* : this information is used to link the sender and the receiver 
 
-Attention, [Feel](https://docs.camunda.io/docs/components/modeler/feel/what-is-feel/) is not able to add different type of variable.
+*CorrelationVariables*:
+The content of these variable is used to find the process instance to unfroze.
+One variable must be provided, with the format "<variableName>=<value>"
+For example  `````"requestId="+requestId`````.
+Attention, the FEEL expression accept only String information in the concatenation (see bellow)
+
+*MessageId* : internal id (optional)
+
+*MessageDuration*: the message is stored in the engine for a limited time. After, it will be deleted. A duration can be given with the duration() FEEL function, or a long in millisecond.
+
+*MessageVariables*:
+Variables to copy in the message. The format is "(<variableName>=<value>)*
+To give the value, a FEEL expression can be used 
+`````"statusTransfert"+status`````
 
 
+**FEEL expression**
 
-For example, an expression 
+To provide the value in the CorrelationVariables and MessageVariables, you can use a FEEL expression
 
-```
-= "requestId="+requestId
-```
+Example:
+`````"requestId="+requestId`````
 
-return null if requestId is not a String (but a long).
+or
 
-The connector accept the notation ${variableName} to calculate the list of variable.
-In this example, use
-```
-= "requestId=${requestId}
-```
-Doing this way, if requestId is a long, it will send in the message as a Long.
+`````"statusTransfert"+status+"dateTransfertExpense="+dateTransfer`````
+
+But attention, [Feel](https://docs.camunda.io/docs/components/modeler/feel/what-is-feel/) expression accept only string: 
+Variables `requestId`, `status`, `dateTransfer` must be String processes variable. 
+If not, the complete expression returns null if requestId is not a String (but a long), without any information.
+
+
+To transfer any other type, use `${<processVariable>}` format is possible.
+For example, in the expression:
+
+`````"statusTransferExpense=${status}, dateTransferExpense=${dateTransfer}, amountTransfer=${amount}"`````
+
+`status` will be replace by its value, a String, `dateTransfer` can be a Date, and `amount` a double.
+
+For example
+ `````"requestId=${requestId}"`````
+
+return the expected information when `requestId` is a Long.
+
+
+See test/resources/SendMessage.bpmn"
 
 
 ### Output
@@ -53,19 +88,20 @@ No output
 
 These errors can be thrown by the connector:
 
-| Code | Explanation |
-|---|---|
-| TOO_MANY_CORRELATION_VARIABLE_ERROR|Correlation error|
-| INCORRECT_VARIABLE| A variable must `name=value`|
+| Code | Explanation                                                          |
+|---|----------------------------------------------------------------------|
+| TOO_MANY_CORRELATION_VARIABLE_ERROR| Correlation error. The Correlation expect one and only one variable. |
+| INCORRECT_VARIABLE| A variable must `name=value`                                         |
 
 
 ## Element Template
 
-The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/template-connector.json) file.
+The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/BpmnMessageTemplate.json) file.
 
 
 # Start the connector
 The connector runs under the Cherry framework. It is possible to start it.
+
 
 ## Specify the connection to Zeebe
 
@@ -107,5 +143,8 @@ Start the connector with
 mvn spring-boot:run
 ````
 
-Access then localhost:9081 to access the dashboard
+or use `start.bat|sh`
+
+
+Access then localhost:9081 to access the dashboard (the port number is specified in the `application.properties`)
 

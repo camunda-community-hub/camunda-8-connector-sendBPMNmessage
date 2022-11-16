@@ -35,7 +35,7 @@ public class SendBPMNMessageFunction extends AbstractConnector implements Outbou
         super(WORKERTYPE_SEND_MESSAGE,
                 SendBPMNMessageInput.class,
                 SendBPMNMessageOutput.class,
-                Arrays.asList(BpmnError.getInstance(BPMNERROR_TOO_MANY_CORRELATION_VARIABLE_ERROR, "Correlation error"),
+                Arrays.asList(BpmnError.getInstance(BPMNERROR_TOO_MANY_CORRELATION_VARIABLE_ERROR, "Correlation error. The Correlation expect one and only one variable."),
                         BpmnError.getInstance(BPMNERROR_INCORRECT_VARIABLE, "A variable must <name>=<value>")));
     }
 
