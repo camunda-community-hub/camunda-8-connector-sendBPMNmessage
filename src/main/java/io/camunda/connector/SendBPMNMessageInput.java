@@ -11,7 +11,7 @@ public class SendBPMNMessageInput {
     private String messageName;
     private String correlationVariables;
     private String messageVariables;
-    private String idMessage;
+    private String messageId;
     private Object messageDuration;
 
 
@@ -27,8 +27,8 @@ public class SendBPMNMessageInput {
         return messageVariables;
     }
 
-    public String getIdMessage() {
-        return idMessage;
+    public String getMessageId() {
+        return messageId;
     }
 
     public Object getMessageDuration() {

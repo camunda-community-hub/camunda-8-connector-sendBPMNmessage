@@ -16,8 +16,8 @@ import java.time.Duration;
 import java.util.*;
 
 @OutboundConnector(
-        name = "SendBPMNMessage", inputVariables = {"messageName", "correlationVariables", "messageVariables", "messageId", "messageDuration"},
-        type = "c-send-message")
+         name = "SendBPMNMessage", inputVariables = {"messageName", "correlationVariables", "messageVariables", "messageId", "messageDuration"},
+         type = "c-send-message")
 
 public class SendBPMNMessageFunction implements OutboundConnectorFunction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendBPMNMessageFunction.class);
@@ -46,7 +46,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
             sendMessageViaGrpc(messageInput.getMessageName(),
                     messageInput.getCorrelationVariables(),
                     messageInput.getMessageVariables(),
-                    messageInput.getIdMessage(),
+                    messageInput.getMessageId(),
                     messageInput.getDuration(),
                     context);
 
