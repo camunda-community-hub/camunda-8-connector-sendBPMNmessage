@@ -18,8 +18,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- connector SDK version -->
-        <version.connector-core>0.3.0</version.connector-core>
-        <version.zeebe>8.0.3</version.zeebe>
+        <connector-core.version>0.3.0</connector-core.version>
+        <connector-validation.version>0.3.0</connector-validation.version>
+
+        <zeebe.version>8.0.3</zeebe.version>
 
         <!-- external libraries -->
         <version.assertj>3.23.1</version.assertj>
@@ -42,13 +44,13 @@
         <dependency>
             <groupId>io.camunda.connector</groupId>
             <artifactId>connector-core</artifactId>
-            <version>${version.connector-core}</version>
+            <version>${connector-core.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.camunda.connector</groupId>
             <artifactId>connector-validation</artifactId>
-            <version>${version.connector-core}</version>
+            <version>${connector-validation.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -56,7 +58,7 @@
         <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>zeebe-client-java</artifactId>
-            <version>${version.zeebe}</version>
+            <version>${zeebe.version}</version>
         </dependency>
 
         <dependency>

@@ -3,7 +3,6 @@ package io.camunda.connector;
 import io.camunda.zeebe.client.ZeebeClient;
 import com.google.gson.Gson;
 import io.camunda.connector.api.annotation.OutboundConnector;
-import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.zeebe.client.api.command.PublishMessageCommandStep1;
@@ -25,6 +24,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
 
     public static final String BPMNERROR_TOO_MANY_CORRELATION_VARIABLE_ERROR = "TOO_MANY_CORRELATION_VARIABLE_ERROR";
     public static final String BPMNERROR_INCORRECT_VARIABLE = "INCORRECT_VARIABLE";
+    public static final String BPMNERROR_SENDMESSAGE_VARIABLE = "SEND_MESSAGE";
 
 
 
@@ -38,7 +38,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
         this.zeebeClient = zeebeClient;
     }
     @Override
-    public SendBPMNMessageOutput execute(OutboundConnectorContext context) throws ConnectorException {
+    public SendBPMNMessageOutput execute(OutboundConnectorContext context) throws Exception {
 
         SendBPMNMessageInput messageInput = context.getVariablesAsType(SendBPMNMessageInput.class);
 
@@ -53,7 +53,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
 
         } catch (Exception e) {
             LOGGER.error("Error during sendMessage [" + messageInput.getMessageName() + "] :" + e);
-            throw new ConnectorException("FAIL", "Error during sendMessage [" + messageInput.getMessageName() + "] :" + e);
+            throw new Exception(BPMNERROR_SENDMESSAGE_VARIABLE+":Error during sendMessage [" + messageInput.getMessageName() + "] :" + e);
         }
         return new SendBPMNMessageOutput();
     }
@@ -75,7 +75,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
                                     String messageVariableList,
                                     String messageId,
                                     Duration timeToLiveDuration,
-                                    final OutboundConnectorContext context) throws ConnectorException {
+                                    final OutboundConnectorContext context) throws Exception {
         String allVariablesSt = context.getVariables();
         Gson gson = new Gson();
         Map<String, Object> allVariables =(Map<String, Object>) gson.fromJson(allVariablesSt, Map.class);
@@ -93,7 +93,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
         // At this moment, we expect only one variable for the correlation key
         if (correlationVariables.size() > 1) {
             LOGGER.error("One (and only one) variable is expected for the correction");
-            throw new ConnectorException(BPMNERROR_TOO_MANY_CORRELATION_VARIABLE_ERROR, "One variable expected for the correction:[" + correlationVariablesList + "]");
+            throw new Exception(BPMNERROR_TOO_MANY_CORRELATION_VARIABLE_ERROR+":One variable expected for the correction:[" + correlationVariablesList + "]");
         }
         String correlationValue = null;
         if (!correlationVariables.isEmpty()) {
@@ -125,7 +125,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
      * @param context context of the execution
      * @return map of variable Name / variable value
      */
-    private Map<String, Object> extractVariable(String variableList, final Map<String, Object> allVariables, final OutboundConnectorContext context) {
+    private Map<String, Object> extractVariable(String variableList, final Map<String, Object> allVariables, final OutboundConnectorContext context) throws Exception{
         Map<String, Object> variables = new HashMap<>();
 
         if (variableList == null)
@@ -135,13 +135,13 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction {
             StringTokenizer stOneVariable = new StringTokenizer(stVariable.nextToken(), "=");
             String name = (stOneVariable.nextToken());
             if (!stOneVariable.hasMoreTokens())
-                throw new ConnectorException(BPMNERROR_INCORRECT_VARIABLE, "A variable must be <name>=<value>, no = for variable [" + name + "]");
+                throw new Exception(BPMNERROR_INCORRECT_VARIABLE+":A variable must be <name>=<value>, no = for variable [" + name + "]");
             Object value = (stOneVariable.hasMoreTokens() ? stOneVariable.nextToken() : null);
             if (value != null && value.toString().startsWith("${")) {
                 // extract the variable from variables
                 if (!value.toString().endsWith("}")) {
                     LOGGER.error("Value [" + value + "] for key [" + name + "] must start by ${ and end by } like ${amount}");
-                    throw new ConnectorException(BPMNERROR_INCORRECT_VARIABLE, "Value [" + value + "] for key [" + name + "] must start by ${ and end by } like ${amount}");
+                    throw new Exception(BPMNERROR_INCORRECT_VARIABLE+":Value [" + value + "] for key [" + name + "] must start by ${ and end by } like ${amount}");
                 }
                 String variableName = value.toString().substring(0, value.toString().length() - 1).substring(2);
                 value = allVariables.get(variableName);
