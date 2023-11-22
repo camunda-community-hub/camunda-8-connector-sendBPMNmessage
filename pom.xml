@@ -21,7 +21,7 @@
         <connector-core.version>0.3.0</connector-core.version>
         <connector-validation.version>0.3.0</connector-validation.version>
 
-        <zeebe.version>8.0.3</zeebe.version>
+        <zeebe.version>8.3.3</zeebe.version>
 
         <!-- external libraries -->
         <version.assertj>3.23.1</version.assertj>
