@@ -61,6 +61,9 @@
           <connectorClasses>
             <connectorClass>io.camunda.connector.zeebe.ZeebeGatewayConnector</connectorClass>
           </connectorClasses>
+          <includeDependencies>
+            <includeDependency>io.camunda.connector:zeebe-gateway-connector-common-types</includeDependency>
+          </includeDependencies>
         </configuration>
       </plugin>
     </plugins>

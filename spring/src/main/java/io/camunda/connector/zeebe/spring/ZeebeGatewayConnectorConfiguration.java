@@ -7,18 +7,19 @@ import io.camunda.connector.zeebe.ZeebeGatewayConnector;
 import io.camunda.connector.zeebe.command.processor.ZeebeGatewayCommandProcessor;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ZeebeGatewayConnectorConfiguration {
   @Bean
-  public ZeebeGatewayConnector zeebeGatewayConnector(ZeebeGatewayClient zeebeGatewayClient, Set<ZeebeGatewayCommandProcessor> zeebeGatewayCommandProcessors){
-    Set<ZeebeGatewayCommandProcessor> commandProcessors = new HashSet<>(zeebeGatewayCommandProcessors);
+  public ZeebeGatewayConnector zeebeGatewayConnector(
+      ZeebeGatewayClient zeebeGatewayClient,
+      Set<ZeebeGatewayCommandProcessor> zeebeGatewayCommandProcessors) {
+    Set<ZeebeGatewayCommandProcessor> commandProcessors =
+        new HashSet<>(zeebeGatewayCommandProcessors);
     commandProcessors.addAll(ZeebeGatewayCommandProcessor.load());
-    return new ZeebeGatewayConnector(zeebeGatewayClient,commandProcessors);
+    return new ZeebeGatewayConnector(zeebeGatewayClient, commandProcessors);
   }
 
   @Bean
@@ -27,7 +28,7 @@ public class ZeebeGatewayConnectorConfiguration {
   }
 
   @Bean
-  public ZeebeClientSupplier zeebeClientSupplier(){
+  public ZeebeClientSupplier zeebeClientSupplier() {
     return new SpringZeebeClientSupplier();
   }
 }
