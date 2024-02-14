@@ -1,0 +1,216 @@
+{
+  "$schema" : "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name" : "Zeebe Gateway Connector",
+  "id" : "io.camunda.zeebe",
+  "version" : 1,
+  "category" : {
+    "id" : "connectors",
+    "name" : "Connectors"
+  },
+  "appliesTo" : [ "bpmn:Task" ],
+  "elementType" : {
+    "value" : "bpmn:ServiceTask"
+  },
+  "groups" : [ {
+    "id" : "command",
+    "label" : "Command"
+  }, {
+    "id" : "parameters",
+    "label" : "Parameters"
+  }, {
+    "id" : "output",
+    "label" : "Output mapping"
+  }, {
+    "id" : "error",
+    "label" : "Error handling"
+  }, {
+    "id" : "retries",
+    "label" : "Retries"
+  } ],
+  "properties" : [ {
+    "value" : "io.camunda:zeebe:1",
+    "binding" : {
+      "property" : "type",
+      "type" : "zeebe:taskDefinition"
+    },
+    "type" : "Hidden"
+  }, {
+    "id" : "command.command",
+    "label" : "Command",
+    "description" : "The command that should be executed",
+    "group" : "command",
+    "binding" : {
+      "name" : "command.command",
+      "type" : "zeebe:input"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Publish message",
+      "value" : "publishMessage"
+    } ]
+  }, {
+    "id" : "command.name",
+    "label" : "Message name",
+    "description" : "The name of the message",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "parameters",
+    "binding" : {
+      "name" : "command.name",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "command.command",
+      "equals" : "publishMessage",
+      "type" : "simple"
+    },
+    "type" : "String"
+  }, {
+    "id" : "command.correlationKey",
+    "label" : "Correlation key",
+    "description" : "The correlation key to use",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "parameters",
+    "binding" : {
+      "name" : "command.correlationKey",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "command.command",
+      "equals" : "publishMessage",
+      "type" : "simple"
+    },
+    "type" : "String"
+  }, {
+    "id" : "command.timeToLive",
+    "label" : "Time to live",
+    "description" : "The time to live for the message in seconds or as duration expression. If 0, the message will not be buffered",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "parameters",
+    "binding" : {
+      "name" : "command.timeToLive",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "command.command",
+      "equals" : "publishMessage",
+      "type" : "simple"
+    },
+    "type" : "String"
+  }, {
+    "id" : "command.messageId",
+    "label" : "Message id",
+    "description" : "Unique identifier for the message. Will be applied once the message needs to be buffered",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "parameters",
+    "binding" : {
+      "name" : "command.messageId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "command.command",
+      "equals" : "publishMessage",
+      "type" : "simple"
+    },
+    "type" : "String"
+  }, {
+    "id" : "command.variables",
+    "label" : "Variables",
+    "description" : "Variables to publish as context",
+    "optional" : false,
+    "feel" : "required",
+    "group" : "parameters",
+    "binding" : {
+      "name" : "command.variables",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "command.command",
+      "equals" : "publishMessage",
+      "type" : "simple"
+    },
+    "type" : "String"
+  }, {
+    "id" : "command.tenantId",
+    "label" : "Tenant id",
+    "description" : "The identifier for the tenant the message should be published to",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "parameters",
+    "binding" : {
+      "name" : "command.tenantId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "command.command",
+      "equals" : "publishMessage",
+      "type" : "simple"
+    },
+    "type" : "String"
+  }, {
+    "id" : "resultVariable",
+    "label" : "Result variable",
+    "description" : "Name of variable to store the response in",
+    "group" : "output",
+    "binding" : {
+      "key" : "resultVariable",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "String"
+  }, {
+    "id" : "resultExpression",
+    "label" : "Result expression",
+    "description" : "Expression to map the response into process variables",
+    "feel" : "required",
+    "group" : "output",
+    "binding" : {
+      "key" : "resultExpression",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Text"
+  }, {
+    "id" : "errorExpression",
+    "label" : "Error expression",
+    "description" : "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/\" target=\"_blank\">documentation</a>.",
+    "feel" : "required",
+    "group" : "error",
+    "binding" : {
+      "key" : "errorExpression",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Text"
+  }, {
+    "id" : "retryCount",
+    "label" : "Retries",
+    "description" : "Number of retries",
+    "value" : "3",
+    "feel" : "optional",
+    "group" : "retries",
+    "binding" : {
+      "property" : "retries",
+      "type" : "zeebe:taskDefinition"
+    },
+    "type" : "String"
+  }, {
+    "id" : "retryBackoff",
+    "label" : "Retry backoff",
+    "description" : "ISO-8601 duration to wait between retries",
+    "value" : "PT0S",
+    "feel" : "optional",
+    "group" : "retries",
+    "binding" : {
+      "key" : "retryBackoff",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "String"
+  } ]
+}
