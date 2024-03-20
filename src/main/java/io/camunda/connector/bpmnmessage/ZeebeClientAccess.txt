@@ -1,0 +1,33 @@
+package io.camunda.connector.bpmnmessage;
+
+import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.spring.client.event.ZeebeClientCreatedEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+/**
+ * the BPMN connector needs to access the ZeebeClient.
+ * A Spring Service is created, which auutowired the zeebeClient object, hopping the runtime will create a service to access it
+ */
+@Service
+public class ZeebeClientAccess {
+
+  @Autowired
+  ZeebeClient zeebeClient;
+
+  ZeebeClient zeebeClientRuntime;
+
+
+  public ZeebeClient getZeebeClient() {
+    return zeebeClient == null ? zeebeClientRuntime : zeebeClient;
+  }
+
+  @EventListener
+  /**
+   * The connectorruntime handle this method
+   */ public void handleStart(ZeebeClientCreatedEvent evt) {
+    this.zeebeClientRuntime = evt.getClient();
+ }
+
+}

@@ -1,16 +1,91 @@
+[![Community badge: Incubating](https://img.shields.io/badge/Lifecycle-Incubating-blue)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#incubating-)
+[![Community extension badge](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)
+![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-0072Ce)
+
+
 # camunda-8-connector-sendBPMNmessage
 
+A Camunda 8 Connector to send a BPMN Message.
 
-![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-0072Ce)
-[![](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)
+## Principle
+The connector publish a message. All information, messageId, messageContent, Correlation key and Time To Live are available as parameters
 
-A Camunda 8 Connector to send a BPMN Message
+
+## Inputs
+| Name                | Description                                             | Class             | Default | Level      |
+|---------------------|---------------------------------------------------------|-------------------|---------|------------|
+| messageName         | Name of the message                                     | java.lang.String  |         | REQUIRED   |
+| correlationVariable | Name of the variable which contains the correlation key | java.lang.String  |         | OPTIONAL   |
+| messageVariables    | Variables to send to the message, separate with a comma | java.lang.String  |         | OPTIONAL   |
+| messageId           | Message Id                                              | java.lang.String  |         | OPTIONAL   |
+| messageDuration     | Duration of the message (TimeToLive)                    | java.lang.Object  |         | OPTIONAL   |
+
+### correlationVariable
+This input contains the value.
+See the FEEL expression section.
+
+### MessageVariables
+A list of ``variableName=value`` separated by a comma. The variable is the name in the message, and the value how to fulfill the variable.
+See the FEEL expression section.
+
+Examples
+````
+"Id="+customerId+",duration=12,address="+customerAddress
+````
+of this form is accepted too
+````
+"Id=${customerId},duration=12,address=${customerAddress}"
+````
+
+the message contains
+
+````
+Id="24455"
+duration=12
+address="1 champs Elysee, Paris"
+````
+
+assuming 24455 is the value inside the process variable customerId
+
+### MessageDuration:
+The duration may be
+* java.time.Duration
+* java.lang.Long value. The command is running to get the duration
+````
+return Duration.ofMillis(valueLong);
+`````
+
+* java.lang.String value. The command is running to get the duration
+````
+return Duration.parse(messageDuration.toString());
+````
+
+## Output
+| Name       | Description                                        | Class          | Level    |
+|------------|----------------------------------------------------|----------------|----------|
+| messageKey | Key of the message. The key is calculated by Zeebe | java.lang.Long | Required | 
+
+Zeebe calculated a messageKey for each message it received.
+
+## BPMN Errors
+| Name                                          | Explanation                                                            |
+|-----------------------------------------------|------------------------------------------------------------------------|
+| BPMNERROR_INCORRECT_VARIABLE                  | Conversion error. The format of the variable list is (Variable=value)* |
+| BPMNERROR_SENDMESSAGE_VARIABLE                | Error during the send operation                                        | 
+
 
 ## Build
 
 ```bash
 mvn clean package
 ```
+
+Two jars are produced. The jar with all dependency can be upload in the [Cherry Framework](https://github.com/camunda-community-hub/zeebe-cherry-framework)
+
+## Element Template
+
+The element templates can be found in the [element-templates/bpmn-message.json](element-templates/bpmn-message.json) file.
+
 
 
 ### Input
@@ -96,7 +171,7 @@ These errors can be thrown by the connector:
 
 ## Element Template
 
-The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/BpmnMessageTemplate.json) file.
+The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/send-bpmn-message.json) file.
 
 
 # Start the connector
