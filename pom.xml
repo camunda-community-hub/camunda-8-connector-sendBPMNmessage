@@ -18,8 +18,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- connector SDK version -->
-    <connectors.version>8.3.1</connectors.version>
-    <zeebe.version>8.3.1</zeebe.version>
+    <connectors.version>8.4.0</connectors.version>
+    <zeebe.version>8.4.0</zeebe.version>
     <spring.boot.version>2.7.4</spring.boot.version>
 
 
@@ -70,6 +70,11 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+      <version>${spring.boot.version}</version>
+    </dependency>
+   <!--<dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <version>${spring.boot.version}</version>
     </dependency>
@@ -77,7 +82,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-core</artifactId>
       <version>${spring.boot.version}</version>
-    </dependency>
+    </dependency>-->
 
     <!-- Element template generator annotations (compile-time only) -->
     <dependency>
