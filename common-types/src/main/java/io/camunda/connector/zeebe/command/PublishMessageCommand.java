@@ -26,23 +26,27 @@ public record PublishMessageCommand(
             group = GROUP_PARAMETERS_ID,
             label = "Time to live",
             description =
-                "The time to live for the message in seconds or as duration expression. If 0, the message will not be buffered")
+                "The time to live for the message in seconds or as duration expression. If 0, the message will not be buffered",
+            optional = true)
         String timeToLive,
     @TemplateProperty(
             group = GROUP_PARAMETERS_ID,
             label = "Message id",
             description =
-                "Unique identifier for the message. Will be applied once the message needs to be buffered")
+                "Unique identifier for the message. Will be applied once the message needs to be buffered",
+            optional = true)
         String messageId,
     @TemplateProperty(
             group = GROUP_PARAMETERS_ID,
             feel = FeelMode.required,
             label = "Variables",
-            description = "Variables to publish as context")
+            description = "Variables to publish as context",
+            optional = true)
         Map<String, Object> variables,
     @TemplateProperty(
             group = GROUP_PARAMETERS_ID,
             label = "Tenant id",
-            description = "The identifier for the tenant the message should be published to")
+            description = "The identifier for the tenant the message should be published to",
+            optional = true)
         String tenantId)
     implements Command {}

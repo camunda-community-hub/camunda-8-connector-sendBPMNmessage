@@ -80,6 +80,16 @@
       </dependency>
       <dependency>
         <groupId>io.camunda.connector</groupId>
+        <artifactId>spring-boot-starter-camunda-connectors</artifactId>
+        <version>${version.camunda-connectors}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda.spring</groupId>
+        <artifactId>spring-boot-starter-camunda-test</artifactId>
+        <version>${version.spring-boot-starter-camunda}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda.connector</groupId>
         <artifactId>zeebe-gateway-connector-core</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -192,9 +202,9 @@
           <version>${plugin.version.maven-enforcer-plugin}</version>
           <configuration>
             <rules>
-              <reactorModuleConvergence />
-              <dependencyConvergence />
-              <requirePluginVersions />
+              <reactorModuleConvergence/>
+              <dependencyConvergence/>
+              <requirePluginVersions/>
             </rules>
           </configuration>
           <executions>
@@ -216,8 +226,8 @@
                   <include>*.md</include>
                   <include>.gitignore</include>
                 </includes>
-                <trimTrailingWhitespace />
-                <endWithNewline />
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
                 <indent>
                   <spaces>true</spaces>
                   <spacesPerTab>2</spacesPerTab>
@@ -225,9 +235,9 @@
               </format>
             </formats>
             <java>
-              <googleJavaFormat />
+              <googleJavaFormat/>
             </java>
-            <pom />
+            <pom/>
           </configuration>
         </plugin>
         <plugin>
@@ -262,7 +272,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

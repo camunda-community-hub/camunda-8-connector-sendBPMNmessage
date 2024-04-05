@@ -92,7 +92,7 @@
     "id" : "command.timeToLive",
     "label" : "Time to live",
     "description" : "The time to live for the message in seconds or as duration expression. If 0, the message will not be buffered",
-    "optional" : false,
+    "optional" : true,
     "feel" : "optional",
     "group" : "parameters",
     "binding" : {
@@ -109,7 +109,7 @@
     "id" : "command.messageId",
     "label" : "Message id",
     "description" : "Unique identifier for the message. Will be applied once the message needs to be buffered",
-    "optional" : false,
+    "optional" : true,
     "feel" : "optional",
     "group" : "parameters",
     "binding" : {
@@ -126,7 +126,7 @@
     "id" : "command.variables",
     "label" : "Variables",
     "description" : "Variables to publish as context",
-    "optional" : false,
+    "optional" : true,
     "feel" : "required",
     "group" : "parameters",
     "binding" : {
@@ -143,7 +143,7 @@
     "id" : "command.tenantId",
     "label" : "Tenant id",
     "description" : "The identifier for the tenant the message should be published to",
-    "optional" : false,
+    "optional" : true,
     "feel" : "optional",
     "group" : "parameters",
     "binding" : {
