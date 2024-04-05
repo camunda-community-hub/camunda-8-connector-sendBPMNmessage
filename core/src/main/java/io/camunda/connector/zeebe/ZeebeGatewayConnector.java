@@ -7,13 +7,14 @@ import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.connector.generator.java.annotation.ElementTemplate;
 import io.camunda.connector.generator.java.annotation.ElementTemplate.PropertyGroup;
-import io.camunda.connector.zeebe.command.processor.ZeebeGatewayCommandProcessor;
+import io.camunda.connector.zeebe.command.processor.ZeebeClientCommandProcessor;
+import io.camunda.zeebe.client.ZeebeClient;
 import java.util.Set;
 
 @OutboundConnector(
     name = "Zeebe Gateway Connector",
     type = "io.camunda:zeebe:1",
-    inputVariables = {})
+    inputVariables = {"command"})
 @ElementTemplate(
     id = "io.camunda.zeebe",
     name = "Zeebe Gateway Connector",
@@ -24,22 +25,17 @@ import java.util.Set;
       @PropertyGroup(id = GROUP_PARAMETERS_ID, label = "Parameters")
     })
 public class ZeebeGatewayConnector implements OutboundConnectorFunction {
-  private final ZeebeGatewayClient zeebeGatewayClient;
-  private final Set<ZeebeGatewayCommandProcessor> zeebeGatewayCommandProcessors;
+  private final ZeebeClient zeebeClient;
+  private final Set<ZeebeClientCommandProcessor> zeebeClientCommandProcessors;
 
   public ZeebeGatewayConnector(
-      ZeebeGatewayClient zeebeGatewayClient,
-      Set<ZeebeGatewayCommandProcessor> zeebeGatewayCommandProcessors) {
-    this.zeebeGatewayClient = zeebeGatewayClient;
-    this.zeebeGatewayCommandProcessors = zeebeGatewayCommandProcessors;
+      ZeebeClient zeebeClient, Set<ZeebeClientCommandProcessor> zeebeGatewayCommandProcessors) {
+    this.zeebeClient = zeebeClient;
+    this.zeebeClientCommandProcessors = zeebeGatewayCommandProcessors;
   }
 
-  public ZeebeGatewayConnector(ZeebeGatewayClient zeebeGatewayClient) {
-    this(zeebeGatewayClient, ZeebeGatewayCommandProcessor.load());
-  }
-
-  public ZeebeGatewayConnector() {
-    this(ZeebeGatewayClient.load());
+  public ZeebeGatewayConnector(ZeebeClient zeebeGatewayClient) {
+    this(zeebeGatewayClient, ZeebeClientCommandProcessor.load());
   }
 
   @Override
@@ -66,9 +62,9 @@ public class ZeebeGatewayConnector implements OutboundConnectorFunction {
   }
 
   private ZeebeGatewayConnectorOutput handleInput(ZeebeGatewayConnectorInput input) {
-    for (ZeebeGatewayCommandProcessor processor : zeebeGatewayCommandProcessors) {
+    for (ZeebeClientCommandProcessor processor : zeebeClientCommandProcessors) {
       if (processor.canProcess(input.command())) {
-        return processor.process(input.command(), zeebeGatewayClient);
+        return processor.process(input.command(), zeebeClient);
       }
     }
     throw new IllegalStateException("No processor found for command " + input.command());

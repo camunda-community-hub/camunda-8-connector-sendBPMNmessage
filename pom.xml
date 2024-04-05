@@ -79,11 +79,6 @@
         <version>${version.camunda-connectors}</version>
       </dependency>
       <dependency>
-        <groupId>io.camunda.spring</groupId>
-        <artifactId>spring-client-zeebe</artifactId>
-        <version>${version.spring-boot-starter-camunda}</version>
-      </dependency>
-      <dependency>
         <groupId>io.camunda.connector</groupId>
         <artifactId>zeebe-gateway-connector-core</artifactId>
         <version>${project.version}</version>
@@ -91,11 +86,6 @@
       <dependency>
         <groupId>io.camunda.connector</groupId>
         <artifactId>zeebe-gateway-connector-common-types</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.camunda.connector</groupId>
-        <artifactId>zeebe-gateway-client-plain</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
@@ -340,9 +330,8 @@
 
   <modules>
     <module>core</module>
-    <module>zeebe-gateway-client-plain</module>
     <module>common-types</module>
-    <module>spring</module>
+    <module>spring-boot</module>
   </modules>
 
 </project>
