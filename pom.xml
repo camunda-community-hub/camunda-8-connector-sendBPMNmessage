@@ -1,16 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>sendbpmnmessage</name>
-  <description>Send BPMN Message Connector</description>
+  <name>connector-template</name>
+  <description>Camunda Connector Template</description>
   <groupId>io.camunda.connector</groupId>
   <artifactId>send-bpmn-message</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0</version>
-
+  <version>1.1.2</version>
 
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
@@ -18,10 +14,15 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- connector SDK version -->
-    <connectors.version>8.4.0</connectors.version>
-    <zeebe.version>8.4.0</zeebe.version>
-    <spring.boot.version>2.7.4</spring.boot.version>
+    <version.connector-core>8.5.0</version.connector-core>
+    <version.connector-runtime>8.5.0</version.connector-runtime>
+    <version.zeebe-client>8.5.0</version.zeebe-client>
 
+    <version.springboot>3.1.4</version.springboot>
+
+
+    <version.opensagres>2.0.4</version.opensagres>
+    <version.filestorage>1.2.0</version.filestorage>
 
     <!-- external libraries -->
     <version.assertj>3.24.2</version.assertj>
@@ -31,13 +32,13 @@
 
     <!-- maven plugins -->
     <plugin.version.maven-clean-plugin>3.3.2</plugin.version.maven-clean-plugin>
-    <plugin.version.maven-compiler-plugin>3.11.0</plugin.version.maven-compiler-plugin>
+    <plugin.version.maven-compiler-plugin>3.13.0</plugin.version.maven-compiler-plugin>
     <plugin.version.maven-dependency-plugin>3.6.1</plugin.version.maven-dependency-plugin>
     <plugin.version.maven-install-plugin>3.1.1</plugin.version.maven-install-plugin>
     <plugin.version.maven-jar-plugin>3.3.0</plugin.version.maven-jar-plugin>
     <plugin.version.maven-resources-plugin>3.3.1</plugin.version.maven-resources-plugin>
-    <plugin.version.maven-shade-plugin>3.5.1</plugin.version.maven-shade-plugin>
-    <plugin.version.maven-surefire-plugin>3.2.2</plugin.version.maven-surefire-plugin>
+    <plugin.version.maven-shade-plugin>3.5.2</plugin.version.maven-shade-plugin>
+    <plugin.version.maven-surefire-plugin>3.2.5</plugin.version.maven-surefire-plugin>
   </properties>
 
   <!-- Push the library to Maven -->
@@ -53,60 +54,77 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-core</artifactId>
-      <version>${connectors.version}</version>
+      <version>${version.connector-core}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-validation</artifactId>
-      <version>${connectors.version}</version>
+      <version>${version.connector-core}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- import io.camunda.connector.runtime.core.outbound.OutboundConnectorFactory -->
+    <!--
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>connector-runtime-core</artifactId>
+      <version>${version.connector-core}</version>
+    </dependency>
+-->
+    <!--
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-client-java</artifactId>
-      <version>${zeebe.version}</version>
+      <version>${version.zeebe-client}</version>
     </dependency>
+-->
 
+    <!-- Joe
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-      <version>${spring.boot.version}</version>
-    </dependency>
-   <!--<dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>${spring.boot.version}</version>
+      <version>${version.springboot}</version>
     </dependency>
+-->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.boot.version}</version>
-    </dependency>-->
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${version.slf4j}</version>
+    </dependency>
 
     <!-- Element template generator annotations (compile-time only) -->
+    <!-- Joe
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>element-template-generator-core</artifactId>
-      <version>${connectors.version}</version>
+      <version>${version.connectors}</version>
       <optional>true</optional>
     </dependency>
+-->
 
+    <!-- Access file  -->
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
+      <groupId>io.camunda.filestorage</groupId>
+      <artifactId>filestorage</artifactId>
+      <version>${version.filestorage}</version>
     </dependency>
+
+
+    <!-- Convert to PDF -->
+    <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document -->
+
 
 
     <!-- test dependencies -->
+    <!-- joe
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-test</artifactId>
-      <version>${connectors.version}</version>
+      <version>${version.connectors}</version>
       <scope>test</scope>
     </dependency>
-
+-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -128,29 +146,22 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${version.slf4j}</version>
-      <scope>test</scope>
-    </dependency>
+
 
     <!-- for testing connectors locally in bundle with runtime -->
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>spring-boot-starter-camunda-connectors</artifactId>
-      <version>${connectors.version}</version>
-      <scope>test</scope>
+      <version>${version.connector-runtime}</version>
+      <!--
       <exclusions>
         <exclusion>
           <groupId>ch.qos.logback</groupId>
           <artifactId>logback-classic</artifactId>
         </exclusion>
       </exclusions>
+      -->
     </dependency>
-
-
-
   </dependencies>
 
   <build>
@@ -212,14 +223,14 @@
             </filters>
             <transformers>
               <!-- This is needed if you have dependencies that use Service Loader. Most Google Cloud client libraries does. -->
-              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               <!-- This is needed to not repeat licenses in the META-INF directory -->
-              <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
               <!-- This is needed to merge existing NOTICE files and keep them downstream -->
               <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
                 <addHeader>false</addHeader>
               </transformer>
-              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
             </transformers>
             <!-- Uncomment and adjust to use relocations inside your JAR -->
             <!--<relocations>
@@ -239,18 +250,6 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>io.camunda.connector</groupId>
-          <artifactId>element-template-generator-maven-plugin</artifactId>
-          <version>${connectors.version}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate-templates</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${plugin.version.maven-surefire-plugin}</version>
@@ -263,7 +262,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
       </plugin>
-
     </plugins>
   </build>
 
@@ -318,5 +316,4 @@
       <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
     </pluginRepository>
   </pluginRepositories>
-
 </project>

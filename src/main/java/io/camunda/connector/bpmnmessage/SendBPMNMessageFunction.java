@@ -6,24 +6,9 @@ import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.connector.cherrytemplate.CherryConnector;
 import io.camunda.zeebe.client.ZeebeClient;
-
-/*
-
-import io.camunda.zeebe.client.api.command.PublishMessageCommandStep1;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.response.PublishMessageResponse;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.client.api.worker.JobHandler;
-
- */
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-/*
-import io.camunda.zeebe.client.api.worker.JobHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-*/
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -31,11 +16,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.StringTokenizer;
 
-
-
 @OutboundConnector(name = "SendBPMNMessage", inputVariables = {}, type = SendBPMNMessageFunction.WORKERTYPE_SEND_MESSAGE)
+@Component
 
 public class SendBPMNMessageFunction implements OutboundConnectorFunction, CherryConnector {
   private static final Logger logger = LoggerFactory.getLogger(SendBPMNMessageFunction.class);
@@ -46,11 +31,36 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
 
   private static final String WORKERLOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAARCAIAAACjLUBkAAAB9UlEQVQ4T2Ps7OplYWHJSE/h4uLatn1na1vnixcvGUgBxsaGrc0Nqqoqjx8/6ejsYbazc5w9Z96q1Wv5+fn9fL1joiOAFly4eOnv379QHbiBhIR4W2tTdWUZGxtr/4TJRcXlt27fYWJkZATKvX37rrKqzssn8OKly/l52Xt2bfXydIdowwrY2dnzcrP27t7m4e66ZOlyR2fP2XPm//nzByjF7OTkcuHCRYi6d+/erV234dq165YW5lFR4TbWVkDHAgUhsnAAtGzWjCmurs5HjhxTVla6eOn6jx8/oHJoJkLAvfsPli5b+eHDRw9Pt8SEWFFRkfPnL/74+RMoBQysGdMmJScnvHz5UkRE+PDRU4JCohBdcMDY3NIxf8EiKA8V8PPz5eZkxsVGf/nydd78hcBQiwgPff/+fV//5JWr1vz79w+qDhXgMxECFBTkK8tLXFycfv/+PWfugukzZn/9+hUqhw0QNhECNDTUgOFATMJigtKEwI0bt4hMp8SaSDxggdIwcPf2VSAJSaT///8HizEoq2oDxYGCSipa9+5cA4pDRIAkUBbOgAAsbgRKI5sFYQABUBBiHJQPsx4NYDER4hw4G8KAAGTjIADTUMJuhDsTwkB2NTIbDrC7EcrCAJhGYIoQmx6JB4yLFi/bvmMnlEc5YGAAAMbF6NQzlAdoAAAAAElFTkSuQmCC";
 
-  ZeebeClient zeebeClient;
+  private ZeebeClient myZeebeClient;
 
-  public SendBPMNMessageFunction(@Autowired ZeebeClient zeebeClient) {
-    this.zeebeClient = zeebeClient;
+  public SendBPMNMessageFunction(ZeebeClient zeebeClient) {
+    this.myZeebeClient = zeebeClient;
   }
+
+  public ZeebeClient getZeebeClient() {
+    ServiceLoader<ZeebeClient> loader = ServiceLoader.load(ZeebeClient.class);
+    return loader.findFirst().isPresent() ? loader.findFirst().get() : null;
+
+  }
+
+  /*
+  @Autowired OutboundConnectorFactory outboundConnectorFactory;
+
+  void springBasedConnectorPresent() throws Exception {
+
+    List<OutboundConnectorConfiguration> listConf = outboundConnectorFactory.getConfigurations()
+        .stream()
+        .toList();
+  }
+*/
+
+  // @ E ventListener
+
+  /**
+   * The connectorruntime handle this method
+   * public void handleStart(ZeebeClientCreatedEvent evt) {
+   * this.zeebeClientRuntime = evt.getClient();
+   */
 
   @Override
   // public void handle(JobClient jobClient, ActivatedJob job) throws Exception {
@@ -58,14 +68,19 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
 
     logger.info("SendBPMNMessage.start processId[{}]", context.getJobContext().getBpmnProcessId());
 
-    Map<String,Object> allVariables = context.bindVariables(Map.class);
+    Map<String, Object> allVariables = context.bindVariables(Map.class);
     SendBPMNMessageInput messageInput = SendBPMNMessageInput.bindVariables(allVariables);
 
     Map<String, Object> variablesToUpdate = new HashMap<>();
     SendBPMNMessageOutput bpmnMessageOutput;
     try {
+
+      ZeebeClient zeebe = getZeebeClient();
+      // springBasedConnectorPresent();
+
       bpmnMessageOutput = sendMessageViaGrpc(messageInput.getMessageName(), messageInput.getCorrelationKey(),
-          messageInput.getMessageVariables(), messageInput.getMessageId(), messageInput.getDuration(), messageInput.getAllVariables(), context);
+          messageInput.getMessageVariables(), messageInput.getMessageId(), messageInput.getDuration(),
+          messageInput.getAllVariables(), context);
       bpmnMessageOutput.bindVariables(variablesToUpdate);
 
     } catch (Exception e) {
@@ -73,7 +88,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
       throw new ConnectorException(
           BPMNERROR_SENDMESSAGE_VARIABLE + ":Error during sendMessage [" + messageInput.getMessageName() + "] :" + e);
     }
-   return new SendBPMNMessageOutput();
+    return new SendBPMNMessageOutput();
   }
 
   /**
@@ -85,15 +100,15 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
    * @param messageVariableList the message variables send to the message (list of value separate by ,)
    * @param messageId           the unique ID of the message; can be omitted. only useful to ensure only one message with the given ID will ever be published (during its lifetime)
    * @param timeToLiveDuration  how long the message should be buffered on the broker
-   * @param context           context
-   * @param allVariables allVariables in processInstance
+   * @param context             context
+   * @param allVariables        allVariables in processInstance
    */
   private SendBPMNMessageOutput sendMessageViaGrpc(final String messageName,
                                                    final String correlationKey,
                                                    final String messageVariableList,
                                                    final String messageId,
                                                    final Duration timeToLiveDuration,
-                                                   Map<String,Object> allVariables,
+                                                   Map<String, Object> allVariables,
                                                    OutboundConnectorContext context) throws Exception {
     SendBPMNMessageOutput messageOutput = new SendBPMNMessageOutput();
 
@@ -104,7 +119,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
         + "] Variable[" + messageVariables + "]" + "] Duration[" + timeToLiveDuration + "]");
 
     // At this moment, we expect only one variable for the correlation key
-    // ZeebeClient zeebeClient = zeebeClientAccess.getZeebeClient();
+    ZeebeClient zeebeClient = getZeebeClient();
 
     /*
     PublishMessageCommandStep1.PublishMessageCommandStep3 messageCommand = zeebeClient.newPublishMessageCommand()
