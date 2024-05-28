@@ -1,88 +1,87 @@
-# camunda-8-connector-sendBPMNmessage
-
-
+[![Community badge: Stable](https://img.shields.io/badge/Lifecycle-Stable-brightgreen)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#stable-)
+[![Community extension badge](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)
 ![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-0072Ce)
-[![](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)
+
+
+# camunda-8-connector-sendBPMNmessage
 
 A Camunda 8 Connector to send a BPMN Message
 
-## Build
-
-```bash
-mvn clean package
-```
 
 
-### Input
+## Principle
+From a PDF document to an extract expression, a new PDF is built.
 
-```json
-{
-   "messageName" : "v-message-transferdone",
-   "correlationVariables": "requestId=${requestId}",
-   "messageId" :  "This-is-an-id",
-   "messageDuration": "duration(\"PT1H\")",
-   "MessageVariables":  "statusTransferExpense=${status}, dateTransferExpense=${dateTransfer}, amountTransfer=${amount}"
+## Inputs
 
-}
-```
-*MessageName* : this information is used to link the sender and the receiver 
+| Name                 | Description                                        | Class            | Default | Level     |
+|----------------------|----------------------------------------------------|------------------|---------|-----------|
+| messageName          | Name of message to send, used to find the receiver | java.lang.String |         | REQUIRED  |
+| messageId            | Message Id                                         | java.lang.String |         | OPTIONAL  | 
+| correlationVariables | Correlation value (1)                              | java.lang.String |         | OPTIONAL  |
+| MessageVariables     | Expression to get the variable expression (2)      | java.lang.String |         | REQUIRED  | 
+| messageDuration      | Duration of message on server                      | java.lang.String |         | OPTIONAL  |
 
-*CorrelationVariables*:
-The content of these variable is used to find the process instance to unfroze.
-One variable must be provided, with the format "<variableName>=<value>"
-For example  `````"requestId="+requestId`````.
-Attention, the FEEL expression accept only String information in the concatenation (see bellow)
 
-*MessageId* : internal id (optional)
+(1) *CorrelationVariables*
+If the receiver is a intermediate catch event message, a correlation is mandatory to find the process instance to unfroze.
 
-*MessageDuration*: the message is stored in the engine for a limited time. After, it will be deleted. A duration can be given with the duration() FEEL function, or a long in millisecond.
+(2) *MessageVariables*:
 
-*MessageVariables*:
 Variables to copy in the message. The format is "(<variableName>=<value>)*
-To give the value, a FEEL expression can be used 
-`````"statusTransfert"+status`````
+An string can be done explicitaly
+To give the value, a FEEL expression can be used
+`````
+statusTransferExpense=Correct,dateTransferExpense=2024/12/05
+`````
+
+Note: A FEEL Expression can be provide:
+`````
+= "statusTransferExpense="+statusTransfer+",dateTransferExpense="+dateTransfer
+`````
+
+where statusTransfer and dateTransfer are process variables.
 
 
-**FEEL expression**
+But attention, [Feel](https://docs.camunda.io/docs/components/modeler/feel/what-is-feel/) expression accept only string:
+Variables `statusTransfer`, `dateTransfer` must be String processes variable.
 
-To provide the value in the CorrelationVariables and MessageVariables, you can use a FEEL expression
-
-Example:
-`````"requestId="+requestId`````
-
-or
-
-`````"statusTransfert"+status+"dateTransfertExpense="+dateTransfer`````
-
-But attention, [Feel](https://docs.camunda.io/docs/components/modeler/feel/what-is-feel/) expression accept only string: 
-Variables `requestId`, `status`, `dateTransfer` must be String processes variable. 
 If not, the complete expression returns null if requestId is not a String (but a long), without any information.
 
+To avoid this and use any kind of variable, use a constant expression with placeholder `${<processVariable>}`.
 
-To transfer any other type, use `${<processVariable>}` format is possible.
 For example, in the expression:
 
-`````"statusTransferExpense=${status}, dateTransferExpense=${dateTransfer}, amountTransfer=${amount}"`````
+`````
+statusTransferExpense=${statusTransfer}, dateTransferExpense=${dateTransfer}, amountTransfer=${amount}
+`````
 
-`status` will be replace by its value, a String, `dateTransfer` can be a Date, and `amount` a double.
-
-For example
- `````"requestId=${requestId}"`````
-
-return the expected information when `requestId` is a Long.
-
+`statusTransfer` will be replace by its value, a String, `dateTransfer` can be a Date, and `amount` a double.
 
 See test/resources/SendMessage.bpmn"
 
 
-### Output
+## Output
+| Name             | Description                     | Class            | Level    |
+|------------------|---------------------------------|------------------|----------|
+| destinationFile  | Reference to the file produced  | java.lang.String | REQUIRED |
 
-```json
-{
+## BPMN Errors
 
-}
-```
-No output
+| Name                                     | Explanation                                                                                                                                      |
+|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| LOAD_ERROR                               | An error occurs during the load                                                                                                                   |
+| LOAD_DOCSOURCE                           | The reference can't be decoded                                                                                                                   |
+| BAD_STORAGE_DEFINITION                   | The storage definition does not correctly describe |
+| NO_DESTINATION_STORAGE_DEFINITION_DEFINE | A storage definition must be set to store the result document                                                                                    |
+| LOAD_PDF_ERROR                           | Error reading the document - is that a PDF?                                                                                                      |
+| ENCRYPTED_PDF_NOT_SUPPORTED              | Encrypted PDF is not supported                                                                                                                   |
+| ERROR_CREATE_FILEVARIABLE                | Error when reading the PDF to create a fileVariable to save                                                                                      |
+| SAVE_ERROR                               | An error occurs during the save                                                                                                                  |
+| INVALID_EXPRESSION                       | Invalid expression to pilot the extraction. Format must be <number1>-<number2> where number1<=number2. n means 'end of document' : example, 10-n |
+| EXTRACTION_ERROR                         | Extraction error                                                                                                                                 |
+
+
 
 ### BPMN Errors
 
@@ -94,57 +93,14 @@ These errors can be thrown by the connector:
 | INCORRECT_VARIABLE| A variable must `name=value`                                         |
 
 
+# Build
+
+```bash
+mvn clean package
+```
+
+Two jars are produced. The jar with all dependencies can be upload in the [Cherry Framework](https://github.com/camunda-community-hub/zeebe-cherry-framework)
+
 ## Element Template
 
-The element template can be found in the [element-templates/BpmnMessageTemplate.json](element-templates/BpmnMessageTemplate.json) file.
-
-
-# Start the connector
-The connector runs under the Cherry framework. It is possible to start it.
-
-
-## Specify the connection to Zeebe
-
-The connection to the Zeebe engine is piloted via the application.properties located on src/main/java/resources/application.properties
-
-### Use a Camunda Saas Cloud:
-
-1. Follow the [Getting Started Guid](https://docs.camunda.io/docs/guides/getting-started/) to create an account, a
-   cluster and client credentials
-
-2. Use the client credentials to fill the following environment variables:
-    * `ZEEBE_ADDRESS`: Address where your cluster can be reached.
-    * `ZEEBE_CLIENT_ID` and `ZEEBE_CLIENT_SECRET`: Credentials to request a new access token.
-    * `ZEEBE_AUTHORIZATION_SERVER_URL`: A new token can be requested at this address, using the credentials.
-
-3. fulfill the information in the application.properties
-````
-# use a cloud Zeebe engine
-zeebe.client.cloud.region=
-zeebe.client.cloud.clusterId=
-zeebe.client.cloud.clientId=
-zeebe.client.cloud.clientSecret=
-````
-
-### Use a onPremise Zeebe
-
-Use this information in the application.properties, and provide the IP address to the Zeebe engine
-
-````
-# use a onPremise Zeebe engine
-zeebe.client.broker.gateway-address=127.0.0.1:26500
-````
-
-## Start the application
-Attention: this connector works with the JDK 17.
-
-Start the connector with
-````
-mvn spring-boot:run
-````
-
-or use `start.bat|sh`
-
-
-Access then localhost:9081 to access the dashboard (the port number is specified in the `application.properties`)
-
+The element template can be found in the [element-templates](element-templates) directory.
