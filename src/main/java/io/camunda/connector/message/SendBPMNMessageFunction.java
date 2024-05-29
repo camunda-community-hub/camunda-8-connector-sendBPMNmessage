@@ -25,9 +25,8 @@ import java.util.StringTokenizer;
 @Component
 public class SendBPMNMessageFunction implements OutboundConnectorFunction, CherryConnector {
   public static final String WORKERTYPE_SEND_MESSAGE = "c-send-message";
-  public static final String BPMNERROR_TOO_MANY_CORRELATION_VARIABLE = "TOO_MANY_CORRELATION_VARIABLE_ERROR";
-  public static final String BPMNERROR_INCORRECT_VARIABLE_DEFINITION = "INCORRECT_VARIABLE";
-  public static final String BPMNERROR_SENDMESSAGE_VARIABLE = "SEND_MESSAGE";
+  public static final String BPMNERROR_INCORRECT_VARIABLE_DEFINITION = "INCORRECT_VARIABLE_DEFINITION";
+  public static final String BPMNERROR_SENDMESSAGE = "SEND_MESSAGE";
   private static final Logger logger = LoggerFactory.getLogger(SendBPMNMessageFunction.class);
   ZeebeClient zeebeClient;
 
@@ -69,6 +68,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
       if (messageInput.getMessageId() != null) {
         messageCommand = messageCommand.messageId(messageInput.getMessageId());
       }
+
       PublishMessageResponse answer = messageCommand.send().join();
       logger.info("Message sent name[{}] Id[{}] correlation[{}] variable[{}] MessageKey[{}]",
           messageInput.getMessageName(), messageInput.getMessageId(), correlationValue, messageVariables,
@@ -78,7 +78,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
     } catch (Exception e) {
       logger.error("Error during sendMessage [{}] : {}", messageInput.getMessageName(), e);
       throw new ConnectorException(
-          BPMNERROR_SENDMESSAGE_VARIABLE + ":Error during sendMessage [" + messageInput.getMessageName() + "] :" + e);
+          BPMNERROR_SENDMESSAGE + ":Error during sendMessage [" + messageInput.getMessageName() + "] :" + e);
     }
   }
 
@@ -103,7 +103,7 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
       String name = (stOneVariable.nextToken());
       if (!stOneVariable.hasMoreTokens())
         throw new ConnectorException(
-            BPMNERROR_INCORRECT_VARIABLE_DEFINITION + ":A variable must be <name>=<value>, no = for variable [" + name
+            BPMNERROR_INCORRECT_VARIABLE_DEFINITION + ":the expression to calculate variables must be (<name>=<value>,)+ no = for variable [" + name
                 + "] expression[" + oneExpression + "]");
       Object value = (stOneVariable.hasMoreTokens() ? stOneVariable.nextToken() : null);
       if (value != null && value.toString().startsWith("${")) {
@@ -140,12 +140,11 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
 
   @Override
   public Map<String, String> getListBpmnErrors() {
-    return Map.of(BPMNERROR_TOO_MANY_CORRELATION_VARIABLE, "Correlation variable error",
-
+    return Map.of(
         BPMNERROR_INCORRECT_VARIABLE_DEFINITION,
-        "Incorrect variable definition. The value must be a list of [name=variable,]",
+        "Incorrect variable expression definition. The value must be a list of (name=variable,)+",
 
-        BPMNERROR_SENDMESSAGE_VARIABLE, "Message can't be send");
+        BPMNERROR_SENDMESSAGE, "Message can't be send");
 
   }
 
