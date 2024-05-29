@@ -1,5 +1,6 @@
 package io.camunda.connector.message;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.camunda.connector.cherrytemplate.CherryInput;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -7,6 +8,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SendBPMNMessageInput implements CherryInput {
 
   @NotEmpty
