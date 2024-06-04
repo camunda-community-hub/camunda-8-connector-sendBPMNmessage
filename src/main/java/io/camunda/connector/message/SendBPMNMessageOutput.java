@@ -8,8 +8,10 @@ import java.util.Map;
 
 public class SendBPMNMessageOutput implements CherryOutput {
 
-  public final Long messageKey;
-  public final String tenantId;
+  public Long messageKey;
+  public String tenantId;
+
+  SendBPMNMessageOutput() {};
 
   SendBPMNMessageOutput(Long messageKey, String tenantId) {
     this.messageKey = messageKey;
