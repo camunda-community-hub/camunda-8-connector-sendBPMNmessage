@@ -1,0 +1,226 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Send BPMN message",
+  "id": "io.camunda.connector.message.SendBPMNMessageFunction",
+  "description": "Send a BPMN Message",
+  "documentationRef": "https://docs.camunda.io/docs/components/modeler/web-modeler/connectors/available-connectors/template/",
+  "icon": {
+    "contents": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAARCAIAAACjLUBkAAAB9UlEQVQ4T2Ps7OplYWHJSE/h4uLatn1na1vnixcvGUgBxsaGrc0Nqqoqjx8/6ejsYbazc5w9Z96q1Wv5+fn9fL1joiOAFly4eOnv379QHbiBhIR4W2tTdWUZGxtr/4TJRcXlt27fYWJkZATKvX37rrKqzssn8OKly/l52Xt2bfXydIdowwrY2dnzcrP27t7m4e66ZOlyR2fP2XPm//nzByjF7OTkcuHCRYi6d+/erV234dq165YW5lFR4TbWVkDHAgUhsnAAtGzWjCmurs5HjhxTVla6eOn6jx8/oHJoJkLAvfsPli5b+eHDRw9Pt8SEWFFRkfPnL/74+RMoBQysGdMmJScnvHz5UkRE+PDRU4JCohBdcMDY3NIxf8EiKA8V8PPz5eZkxsVGf/nydd78hcBQiwgPff/+fV//5JWr1vz79w+qDhXgMxECFBTkK8tLXFycfv/+PWfugukzZn/9+hUqhw0QNhECNDTUgOFATMJigtKEwI0bt4hMp8SaSDxggdIwcPf2VSAJSaT///8HizEoq2oDxYGCSipa9+5cA4pDRIAkUBbOgAAsbgRKI5sFYQABUBBiHJQPsx4NYDER4hw4G8KAAGTjIADTUMJuhDsTwkB2NTIbDrC7EcrCAJhGYIoQmx6JB4yLFi/bvmMnlEc5YGAAAMbF6NQzlAdoAAAAAElFTkSuQmCC"
+  },
+  "category": {
+    "id": "connectors",
+    "name": "connectors"
+  },
+  "appliesTo": [
+    "bpmn:Task"
+  ],
+  "groups": [
+    {
+      "id": "Input",
+      "label": "Input"
+    },
+    {
+      "id": "Output",
+      "label": "Output"
+    }
+  ],
+  "properties": [
+    {
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      },
+      "type": "Hidden",
+      "value": "c-send-message"
+    },
+	
+	
+	
+    {
+      "groups": "output",
+      "type": "String",
+      "value": "result",
+      "label": "Result Variable Label",
+      "binding": {
+        "key": "Result Variable",
+        "type": "zeebe:taskHeader"
+      }
+    },
+    {
+      "description": "Message name to send",
+      "feel": "optional",
+      "binding": {
+        "name": "messageName",
+        "type": "zeebe:input"
+      },
+      "id": "messageName",
+      "label": "Message name",
+      "type": "String",
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "Input"
+    },
+    {
+      "description": "Value of the correlation, if the message will be catch by a correlation event",
+      "binding": {
+        "name": "correlationVariables_optional",
+        "type": "zeebe:input"
+      },
+      "id": "correlationVariables_optional",
+      "label": "Provide Correlation variable?",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Yes",
+          "value": "true"
+        },
+        {
+          "name": "No",
+          "value": "false"
+        }
+      ],
+      "value": "false",
+      "group": "Input"
+    },
+    {
+      "condition": {
+        "equals": "true",
+        "property": "correlationVariables_optional"
+      },
+      "description": "Value of the correlation, if the message will be catch by a correlation event",
+      "feel": "optional",
+      "binding": {
+        "name": "correlationVariables",
+        "type": "zeebe:input"
+      },
+      "id": "correlationVariables",
+      "label": "Correlation variable",
+      "type": "String",
+      "group": "Input"
+    },
+    {
+      "description": "Variables to copy in the message",
+      "binding": {
+        "name": "messageVariables_optional",
+        "type": "zeebe:input"
+      },
+      "id": "messageVariables_optional",
+      "label": "Provide Message variables?",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Yes",
+          "value": "true"
+        },
+        {
+          "name": "No",
+          "value": "false"
+        }
+      ],
+      "value": "false",
+      "group": "Input"
+    },
+    {
+      "condition": {
+        "equals": "true",
+        "property": "messageVariables_optional"
+      },
+      "description": "Variables to copy in the message",
+      "feel": "optional",
+      "binding": {
+        "name": "messageVariables",
+        "type": "zeebe:input"
+      },
+      "id": "messageVariables",
+      "label": "Message variables",
+      "type": "String",
+      "group": "Input"
+    },
+    {
+      "description": "Id of the message",
+      "binding": {
+        "name": "messageId_optional",
+        "type": "zeebe:input"
+      },
+      "id": "messageId_optional",
+      "label": "Provide Message ID?",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Yes",
+          "value": "true"
+        },
+        {
+          "name": "No",
+          "value": "false"
+        }
+      ],
+      "value": "false",
+      "group": "Input"
+    },
+    {
+      "condition": {
+        "equals": "true",
+        "property": "messageId_optional"
+      },
+      "description": "Id of the message",
+      "feel": "optional",
+      "binding": {
+        "name": "messageId",
+        "type": "zeebe:input"
+      },
+      "id": "messageId",
+      "label": "Message ID",
+      "type": "String",
+      "group": "Input"
+    },
+    {
+      "description": "Message duration. After this delay, message is deleted if it doesn\u0027t fit a process instance",
+      "binding": {
+        "name": "messageDuration_optional",
+        "type": "zeebe:input"
+      },
+      "id": "messageDuration_optional",
+      "label": "Provide Duration (FEEL duration or time in ms)?",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Yes",
+          "value": "true"
+        },
+        {
+          "name": "No",
+          "value": "false"
+        }
+      ],
+      "value": "false",
+      "group": "Input"
+    },
+    {
+      "condition": {
+        "equals": "true",
+        "property": "messageDuration_optional"
+      },
+      "description": "Message duration. After this delay, message is deleted if it doesn\u0027t fit a process instance",
+      "feel": "optional",
+      "binding": {
+        "name": "messageDuration",
+        "type": "zeebe:input"
+      },
+      "id": "messageDuration",
+      "label": "Duration (FEEL duration or time in ms)",
+      "type": "String",
+      "group": "Input"
+    },
+    {
+      "label": "ControllerPage Expression",
+      "description": "Expression to define BPMN Errors to throw",
+      "type": "Hidden",
+      "value": "if is defined(error) then bpmnError(error.code, error.message) else null",
+      "binding": {
+        "key": "ERROR_EXPRESSION_KEYWORD",
+        "type": "zeebe:taskHeader"
+      }
+    }
+  ]
+}

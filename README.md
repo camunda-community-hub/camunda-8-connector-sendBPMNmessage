@@ -83,6 +83,14 @@ mvn clean package
 
 Two jars are produced. The jar with all dependencies can be upload in the [Cherry Framework](https://github.com/camunda-community-hub/zeebe-cherry-framework)
 
-## Element Template
+# Element Template
 
 The element template can be found in the [element-templates](element-templates) directory.
+
+# Example
+
+![SendMessageOperations.png](doc%2FSendMessageOperations.png)
+
+This process send a message `Pay employee` without any correlation.
+
+The second process send back a message `Transfer done` with a correlation key.

@@ -55,7 +55,7 @@ public class SendBPMNMessageInput implements CherryInput {
 
   @Override
   public List<Map<String, Object>> getInputParameters() {
-    return List.of(Map.of(PARAMETER_MAP_NAME, "MessageName", PARAMETER_MAP_LABEL, "Message name", PARAMETER_MAP_CLASS,
+    return List.of(Map.of(PARAMETER_MAP_NAME, "messageName", PARAMETER_MAP_LABEL, "Message name", PARAMETER_MAP_CLASS,
             String.class, PARAMETER_MAP_LEVEL, PARAMETER_MAP_LEVEL_REQUIRED, PARAMETER_MAP_EXPLANATION,
             "Message name to send"),
         Map.of(PARAMETER_MAP_NAME, "correlationVariables", PARAMETER_MAP_LABEL, "Correlation variable",
