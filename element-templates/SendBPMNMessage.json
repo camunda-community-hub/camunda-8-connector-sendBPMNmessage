@@ -12,7 +12,8 @@
     "name": "connectors"
   },
   "appliesTo": [
-    "bpmn:Task"
+    "bpmn:Task",
+    "bpmn:IntermediateThrowEvent"
   ],
   "groups": [
     {
@@ -32,9 +33,6 @@
       "type": "Hidden",
       "value": "c-send-message"
     },
-	
-	
-	
     {
       "groups": "output",
       "type": "String",
