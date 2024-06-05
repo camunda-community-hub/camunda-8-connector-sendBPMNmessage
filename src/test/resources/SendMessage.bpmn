@@ -114,14 +114,20 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:intermediateThrowEvent id="Event_SendMessage" name="Pay employee">
+    <bpmn:intermediateThrowEvent id="Event_SendMessage" name="Pay employee" zeebe:modelerTemplate="io.camunda.connector.message.SendBPMNMessageFunction" zeebe:modelerTemplateIcon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAARCAIAAACjLUBkAAAB9UlEQVQ4T2Ps7OplYWHJSE/h4uLatn1na1vnixcvGUgBxsaGrc0Nqqoqjx8/6ejsYbazc5w9Z96q1Wv5+fn9fL1joiOAFly4eOnv379QHbiBhIR4W2tTdWUZGxtr/4TJRcXlt27fYWJkZATKvX37rrKqzssn8OKly/l52Xt2bfXydIdowwrY2dnzcrP27t7m4e66ZOlyR2fP2XPm//nzByjF7OTkcuHCRYi6d+/erV234dq165YW5lFR4TbWVkDHAgUhsnAAtGzWjCmurs5HjhxTVla6eOn6jx8/oHJoJkLAvfsPli5b+eHDRw9Pt8SEWFFRkfPnL/74+RMoBQysGdMmJScnvHz5UkRE+PDRU4JCohBdcMDY3NIxf8EiKA8V8PPz5eZkxsVGf/nydd78hcBQiwgPff/+fV//5JWr1vz79w+qDhXgMxECFBTkK8tLXFycfv/+PWfugukzZn/9+hUqhw0QNhECNDTUgOFATMJigtKEwI0bt4hMp8SaSDxggdIwcPf2VSAJSaT///8HizEoq2oDxYGCSipa9+5cA4pDRIAkUBbOgAAsbgRKI5sFYQABUBBiHJQPsx4NYDER4hw4G8KAAGTjIADTUMJuhDsTwkB2NTIbDrC7EcrCAJhGYIoQmx6JB4yLFi/bvmMnlEc5YGAAAMbF6NQzlAdoAAAAAElFTkSuQmCC">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="c-send-message" />
         <zeebe:ioMapping>
-          <zeebe:input source="=&#34;amount=${expenseAmount},accountFrom=${companyAccount},accountTo=${employeAccount},requestId=${requestId}&#34;" target="messageVariables" />
           <zeebe:input source="= &#34;msg-starttransfer&#34;" target="messageName" />
-          <zeebe:input source="=duration(&#34;PT1H&#34;)" target="messageDuration" />
+          <zeebe:input source="false" target="correlationVariables_optional" />
+          <zeebe:input source="false" target="messageVariables_optional" />
+          <zeebe:input source="false" target="messageId_optional" />
+          <zeebe:input source="false" target="messageDuration_optional" />
         </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="Result Variable" value="result" />
+          <zeebe:header key="ERROR_EXPRESSION_KEYWORD" value="if is defined(error) then bpmnError(error.code, error.message) else null" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0au8r49</bpmn:incoming>
       <bpmn:incoming>Flow_0f7sma9</bpmn:incoming>
@@ -189,7 +195,7 @@
   "schemaVersion": 4
 }</zeebe:userTaskForm>
     </bpmn:extensionElements>
-    <bpmn:startEvent id="Event_ReceivedTransferRequest" name="ReceivedTransferRequest">
+    <bpmn:startEvent id="Event_ReceivedTransferRequest" name="Transfer requested">
       <bpmn:outgoing>Flow_1of3d6n</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_003p1pu" messageRef="Message_28bi5b3" />
     </bpmn:startEvent>
@@ -307,7 +313,7 @@
       <bpmndi:BPMNShape id="Event_0dyym8q_di" bpmnElement="Event_SendMessage">
         <dc:Bounds x="542" y="159" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="526" y="129" width="71" height="14" />
+          <dc:Bounds x="527" y="129" width="70" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0jq4okp_di" bpmnElement="Activity_099plr6">
@@ -372,7 +378,7 @@
       <bpmndi:BPMNShape id="Event_0vmlhwi_di" bpmnElement="Event_ReceivedTransferRequest">
         <dc:Bounds x="290" y="462" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="267" y="505" width="84" height="27" />
+          <dc:Bounds x="285" y="505" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_11ymcg6_di" bpmnElement="Activity_1iiidob">
@@ -418,8 +424,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15usxus_di" bpmnElement="Flow_15usxus">
         <di:waypoint x="560" y="195" />
-        <di:waypoint x="560" y="299" />
-        <di:waypoint x="308" y="299" />
+        <di:waypoint x="560" y="360" />
+        <di:waypoint x="308" y="360" />
         <di:waypoint x="308" y="462" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16uqcy1_di" bpmnElement="Flow_16uqcy1">
