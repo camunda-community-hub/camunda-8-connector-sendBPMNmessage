@@ -11,9 +11,9 @@ public class SendBPMNMessageOutput implements CherryOutput {
   public Long messageKey;
   public String tenantId;
 
-  SendBPMNMessageOutput() {};
+  public SendBPMNMessageOutput() {}
 
-  SendBPMNMessageOutput(Long messageKey, String tenantId) {
+  public SendBPMNMessageOutput(Long messageKey, String tenantId) {
     this.messageKey = messageKey;
     this.tenantId = tenantId;
   }
