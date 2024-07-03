@@ -6,6 +6,7 @@ import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.connector.cherrytemplate.CherryConnector;
+import io.camunda.connector.message.util.ZeebeClientHelper;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.command.PublishMessageCommandStep1;
 import io.camunda.zeebe.client.api.response.PublishMessageResponse;
@@ -36,7 +37,11 @@ public class SendBPMNMessageFunction implements OutboundConnectorFunction, Cherr
    * @param zeebeClient zeebe client to connect the server
    */
   public SendBPMNMessageFunction(ZeebeClient zeebeClient) {
-    this.zeebeClient = zeebeClient;
+    this.zeebeClient = ZeebeClientHelper.buildClient();
+  }
+
+  public SendBPMNMessageFunction() {
+    this.zeebeClient = ZeebeClientHelper.buildClient();
   }
 
   @Override
