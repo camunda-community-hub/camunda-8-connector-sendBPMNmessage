@@ -81,7 +81,54 @@ See test/resources/SendMessage.bpmn"
 mvn clean package
 ```
 
-Two jars are produced. The jar with all dependencies can be upload in the [Cherry Framework](https://github.com/camunda-community-hub/zeebe-cherry-framework)
+## Deployment
+Two jars are produced after build. The jar with all dependencies is the one we will use.
+
+### Cherry Frameowrk
+Upload the jar in the [Cherry Framework](https://github.com/camunda-community-hub/zeebe-cherry-framework)
+
+### Connector-Runtime
+
+You can use camunda's [connector-runtime](https://docs.camunda.io/docs/self-managed/setup/guides/running-custom-connectors/#modify-connectors-config) to deploy your connector by adding the following to connectors helm values:
+
+
+```
+    env:
+      - name: LOGGING_LEVEL_ROOT
+        value: "INFO"
+      - name: CONNECTOR_SENDBPMNMESSAGE_FUNCTION
+        value: io.camunda.connector.message.SendBPMNMessageFunction
+      - name: CONNECTOR_SENDBPMNMESSAGE_TYPE
+        value: "c-send-message"
+      - name: ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS
+        value: "cntxt-zeebe-zeebe-gateway:26500"       
+    ## @param connectors.initContainers can be used to set up extra init containers for the application Pod
+    initContainers:
+      - name: send-bpmn-message
+        image: curlimages/curl
+        args:
+          - "-o"
+          - "/opt/custom/send-bpmn-message-1.3.0-with-dependencies.jar"
+          - "https://hosted-link.com/send-bpmn-message-1.3.0-with-dependencies.jar"
+        volumeMounts:
+          - name: init-script
+            mountPath: /opt/custom
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+
+    ## @param connectors.extraVolumes can be used to define extra volumes for the Connectors pods, useful for TLS and self-signed certificates
+    extraVolumes:
+      - name: init-script
+        emptyDir: {}
+        
+    ## @param connectors.extraVolumeMounts can be used to mount extra volumes for the Connectors pods, useful for TLS and self-signed certificates
+    extraVolumeMounts:
+      - mountPath: /opt/custom/send-bpmn-message-1.3.0-with-dependencies.jar
+        name: init-script
+        subPath: send-bpmn-message-1.3.0-with-dependencies.jar
+
+```
 
 # Element Template
 
