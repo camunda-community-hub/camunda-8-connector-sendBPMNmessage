@@ -10,7 +10,9 @@ A Camunda 8 Connector to send a BPMN Message
 
 
 ## Principle
-Send a BPMN Message
+Send a BPMN Message. Visit https://docs.camunda.io/docs/components/modeler/bpmn/message-events/.
+This worker execute the Send Message event in your process.
+
 
 ## Inputs
 
@@ -89,7 +91,7 @@ The element template can be found in the [element-templates](element-templates) 
 
 # Example
 
-![SendMessageOperations.png](doc%2FSendMessageOperations.png)
+![SendMessageOperations.png](doc/SendMessageOperations.png)
 
 This process send a message `Pay employee` without any correlation.
 
